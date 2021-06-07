@@ -2,14 +2,17 @@ package com.wang.avi.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.wang.avi.AVLoadingIndicatorView;
+import com.wang.avi.Indicator;
+import com.wang.avi.indicators.*;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * Created by Jack Wang on 2016/8/5.
@@ -37,14 +40,17 @@ public class SampleActivity extends AppCompatActivity{
 
             @Override
             public void onBindViewHolder(IndicatorHolder holder, final int position) {
-                holder.indicatorView.setIndicator(INDICATORS[position]);
-                holder.itemLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent=new Intent(SampleActivity.this,IndicatorActivity.class);
-                        intent.putExtra("indicator",INDICATORS[position]);
-                        startActivity(intent);
-                    }
+                try {
+                    holder.indicatorView.setIndicator((Indicator) INDICATORS[position].newInstance());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+                holder.itemLayout.setOnClickListener(v -> {
+                    Intent intent=new Intent(SampleActivity.this,IndicatorActivity.class);
+                    intent.putExtra("indicator",INDICATORS[position].getName());
+                    startActivity(intent);
                 });
             }
 
@@ -68,37 +74,38 @@ public class SampleActivity extends AppCompatActivity{
     }
 
 
-
-    private static final String[] INDICATORS=new String[]{
-            "BallPulseIndicator",
-            "BallGridPulseIndicator",
-            "BallClipRotateIndicator",
-            "BallClipRotatePulseIndicator",
-            "SquareSpinIndicator",
-            "BallClipRotateMultipleIndicator",
-            "BallPulseRiseIndicator",
-            "BallRotateIndicator",
-            "CubeTransitionIndicator",
-            "BallZigZagIndicator",
-            "BallZigZagDeflectIndicator",
-            "BallTrianglePathIndicator",
-            "BallScaleIndicator",
-            "LineScaleIndicator",
-            "LineScalePartyIndicator",
-            "BallScaleMultipleIndicator",
-            "BallPulseSyncIndicator",
-            "BallBeatIndicator",
-            "LineScalePulseOutIndicator",
-            "LineScalePulseOutRapidIndicator",
-            "BallScaleRippleIndicator",
-            "BallScaleRippleMultipleIndicator",
-            "BallSpinFadeLoaderIndicator",
-            "LineSpinFadeLoaderIndicator",
-            "TriangleSkewSpinIndicator",
-            "PacmanIndicator",
-            "BallGridBeatIndicator",
-            "SemiCircleSpinIndicator",
-            "com.wang.avi.sample.MyCustomIndicator"
+    private static final Class<? >[] INDICATORS=new Class<?>[]{
+            BallPulseIndicator.class,
+            BallGridPulseIndicator.class,
+            BallClipRotateIndicator.class,
+            BallClipRotatePulseIndicator.class,
+            SquareSpinIndicator.class,
+            BallClipRotateMultipleIndicator.class,
+            BallPulseRiseIndicator.class,
+            BallRotateIndicator.class,
+            CubeTransitionIndicator.class,
+            BallZigZagIndicator.class,
+            BallZigZagDeflectIndicator.class,
+            BallTrianglePathIndicator.class,
+            BallScaleIndicator.class,
+            LineScaleIndicator.class,
+            LineScalePartyIndicator.class,
+            BallScaleMultipleIndicator.class,
+            BallPulseSyncIndicator.class,
+            BallBeatIndicator.class,
+            LineScalePulseOutIndicator.class,
+            LineScalePulseOutRapidIndicator.class,
+            BallScaleRippleIndicator.class,
+            BallScaleRippleMultipleIndicator.class,
+            BallSpinFadeLoaderIndicator.class,
+            LineSpinFadeLoaderIndicator.class,
+            TriangleSkewSpinIndicator.class,
+            PacmanIndicator.class,
+            BallGridBeatIndicator.class,
+            SemiCircleSpinIndicator.class,
+            MyCustomIndicator.class
     };
+
+
 
 }

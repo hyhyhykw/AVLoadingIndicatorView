@@ -9,9 +9,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 
@@ -19,9 +17,9 @@ import com.wang.avi.indicators.BallPulseIndicator;
 
 public class AVLoadingIndicatorView extends View {
 
-    private static final String TAG="AVLoadingIndicatorView";
+    private static final String TAG = "AVLoadingIndicatorView";
 
-    private static final BallPulseIndicator DEFAULT_INDICATOR=new BallPulseIndicator();
+    private static final BallPulseIndicator DEFAULT_INDICATOR = new BallPulseIndicator();
 
     private static final int MIN_SHOW_TIME = 500; // ms
     private static final int MIN_DELAY = 500; // ms
@@ -34,25 +32,17 @@ public class AVLoadingIndicatorView extends View {
 
     private boolean mDismissed = false;
 
-    private final Runnable mDelayedHide = new Runnable() {
-
-        @Override
-        public void run() {
-            mPostedHide = false;
-            mStartTime = -1;
-            setVisibility(View.GONE);
-        }
+    private final Runnable mDelayedHide = () -> {
+        mPostedHide = false;
+        mStartTime = -1;
+        setVisibility(View.GONE);
     };
 
-    private final Runnable mDelayedShow = new Runnable() {
-
-        @Override
-        public void run() {
-            mPostedShow = false;
-            if (!mDismissed) {
-                mStartTime = System.currentTimeMillis();
-                setVisibility(View.VISIBLE);
-            }
+    private final Runnable mDelayedShow = () -> {
+        mPostedShow = false;
+        if (!mDismissed) {
+            mStartTime = System.currentTimeMillis();
+            setVisibility(View.VISIBLE);
         }
     };
 
@@ -67,27 +57,24 @@ public class AVLoadingIndicatorView extends View {
     private boolean mShouldStartAnimationDrawable;
 
     public AVLoadingIndicatorView(Context context) {
-        super(context);
-        init(context, null,0,0);
+        this(context,null);
     }
 
     public AVLoadingIndicatorView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs,0,R.style.AVLoadingIndicatorView);
+        this(context, attrs,0);
     }
 
     public AVLoadingIndicatorView(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs,defStyleAttr,R.style.AVLoadingIndicatorView);
+        this(context, attrs, defStyleAttr, R.style.AVLoadingIndicatorView);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public AVLoadingIndicatorView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context,attrs,defStyleAttr,R.style.AVLoadingIndicatorView);
+        init(context, attrs, defStyleAttr, R.style.AVLoadingIndicatorView);
     }
 
-    private void init(Context context,AttributeSet attrs,int defStyleAttr, int defStyleRes) {
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         mMinWidth = 24;
         mMaxWidth = 48;
         mMinHeight = 24;
@@ -100,10 +87,9 @@ public class AVLoadingIndicatorView extends View {
         mMaxWidth = a.getDimensionPixelSize(R.styleable.AVLoadingIndicatorView_maxWidth, mMaxWidth);
         mMinHeight = a.getDimensionPixelSize(R.styleable.AVLoadingIndicatorView_minHeight, mMinHeight);
         mMaxHeight = a.getDimensionPixelSize(R.styleable.AVLoadingIndicatorView_maxHeight, mMaxHeight);
-        String indicatorName=a.getString(R.styleable.AVLoadingIndicatorView_indicatorName);
-        mIndicatorColor=a.getColor(R.styleable.AVLoadingIndicatorView_indicatorColor, Color.WHITE);
-        setIndicator(indicatorName);
-        if (mIndicator==null){
+
+        mIndicatorColor = a.getColor(R.styleable.AVLoadingIndicatorView_indicatorColor, Color.WHITE);
+        if (mIndicator == null) {
             setIndicator(DEFAULT_INDICATOR);
         }
         a.recycle();
@@ -141,54 +127,22 @@ public class AVLoadingIndicatorView extends View {
      * setIndicatorColor(0xFF00FF00)
      * or
      * setIndicatorColor(getResources().getColor(android.R.color.black))
+     *
      * @param color
      */
-    public void setIndicatorColor(int color){
-        this.mIndicatorColor=color;
+    public void setIndicatorColor(int color) {
+        this.mIndicatorColor = color;
         mIndicator.setColor(color);
     }
 
 
-    /**
-     * You should pay attention to pass this parameter with two way:
-     * for example:
-     * 1. Only class Name,like "SimpleIndicator".(This way would use default package name with
-     * "com.wang.avi.indicators")
-     * 2. Class name with full package,like "com.my.android.indicators.SimpleIndicator".
-     * @param indicatorName the class must be extend Indicator .
-     */
-    public void setIndicator(String indicatorName){
-        if (TextUtils.isEmpty(indicatorName)){
-            return;
-        }
-        StringBuilder drawableClassName=new StringBuilder();
-        if (!indicatorName.contains(".")){
-            String defaultPackageName=getClass().getPackage().getName();
-            drawableClassName.append(defaultPackageName)
-                    .append(".indicators")
-                    .append(".");
-        }
-        drawableClassName.append(indicatorName);
-        try {
-            Class<?> drawableClass = Class.forName(drawableClassName.toString());
-            Indicator indicator = (Indicator) drawableClass.newInstance();
-            setIndicator(indicator);
-        } catch (ClassNotFoundException e) {
-            Log.e(TAG,"Didn't find your class , check the name again !");
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void smoothToShow(){
-        startAnimation(AnimationUtils.loadAnimation(getContext(),android.R.anim.fade_in));
+    public void smoothToShow() {
+        startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in));
         setVisibility(VISIBLE);
     }
 
-    public void smoothToHide(){
-        startAnimation(AnimationUtils.loadAnimation(getContext(),android.R.anim.fade_out));
+    public void smoothToHide() {
+        startAnimation(AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_out));
         setVisibility(GONE);
     }
 

@@ -1,11 +1,13 @@
 package com.wang.avi.sample;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.wang.avi.AVLoadingIndicatorView;
+import com.wang.avi.Indicator;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by Jack Wang on 2016/8/5.
@@ -22,7 +24,15 @@ public class IndicatorActivity extends AppCompatActivity{
 
         String indicator=getIntent().getStringExtra("indicator");
         avi= (AVLoadingIndicatorView) findViewById(R.id.avi);
-        avi.setIndicator(indicator);
+        try {
+            avi.setIndicator((Indicator) Class.forName(indicator).newInstance());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public void hideClick(View view) {

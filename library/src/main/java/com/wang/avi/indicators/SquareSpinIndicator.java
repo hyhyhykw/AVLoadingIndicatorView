@@ -20,12 +20,12 @@ public class SquareSpinIndicator extends Indicator {
     private float rotateX;
     private float rotateY;
 
-    private Camera mCamera;
-    private Matrix mMatrix;
+    private final Camera mCamera;
+    private final Matrix mMatrix;
 
-    public SquareSpinIndicator(){
-        mCamera=new Camera();
-        mMatrix=new Matrix();
+    public SquareSpinIndicator() {
+        mCamera = new Camera();
+        mMatrix = new Matrix();
     }
 
     @Override
@@ -42,31 +42,25 @@ public class SquareSpinIndicator extends Indicator {
         mMatrix.postTranslate(centerX(), centerY());
         canvas.concat(mMatrix);
 
-        canvas.drawRect(new RectF(getWidth()/5,getHeight()/5,getWidth()*4/5,getHeight()*4/5),paint);
+        canvas.drawRect(new RectF(getWidth() / 5f, getHeight() / 5f, getWidth() * 4 / 5f, getHeight() * 4f / 5), paint);
     }
 
     @Override
     public ArrayList<ValueAnimator> onCreateAnimators() {
-        ArrayList<ValueAnimator> animators=new ArrayList<>();
-        ValueAnimator animator=ValueAnimator.ofFloat(0,180,180,0,0);
-        addUpdateListener(animator,new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                rotateX= (float) animation.getAnimatedValue();
-                postInvalidate();
-            }
+        ArrayList<ValueAnimator> animators = new ArrayList<>();
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 180, 180, 0, 0);
+        addUpdateListener(animator, animation -> {
+            rotateX = (float) animation.getAnimatedValue();
+            postInvalidate();
         });
         animator.setInterpolator(new LinearInterpolator());
         animator.setRepeatCount(-1);
         animator.setDuration(2500);
 
-        ValueAnimator animator1=ValueAnimator.ofFloat(0,0,180,180,0);
-        addUpdateListener(animator1,new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                rotateY= (float) animation.getAnimatedValue();
-                postInvalidate();
-            }
+        ValueAnimator animator1 = ValueAnimator.ofFloat(0, 0, 180, 180, 0);
+        addUpdateListener(animator1, animation -> {
+            rotateY = (float) animation.getAnimatedValue();
+            postInvalidate();
         });
         animator1.setInterpolator(new LinearInterpolator());
         animator1.setRepeatCount(-1);
